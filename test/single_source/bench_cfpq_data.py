@@ -14,7 +14,7 @@ from test.suites.cfpq_data import all_cfpq_data_test_cases
 
 @pytest.mark.parametrize('chunk_size', [1, 2, 4, 8, 16, 32, 50, 100, 500, 1000, 5000, 10000, None])
 @all_cfpq_data_test_cases(GLOBAL_CFPQ_DATA)
-def test_single_source_benchmark_total(graph, grammar, algo, chunk_size, benchmark):
+def test_single_source_benchmark_total_small(graph, grammar, algo, chunk_size, benchmark):
     g = LabelGraph.from_txt(graph)
     gr = CnfGrammar.from_cnf(grammar)
     chunks = g.chunkify(g.matrices_size if chunk_size is None else chunk_size)
@@ -28,6 +28,24 @@ def test_single_source_benchmark_total(graph, grammar, algo, chunk_size, benchma
             a.solve(chunk)
 
     benchmark.pedantic(run_suite, rounds=5, iterations=1, warmup_rounds=0)
+
+
+@pytest.mark.parametrize('chunk_size', [500, 1000, 5000, 10000, 50000, 100000, None])
+@all_cfpq_data_test_cases(GLOBAL_CFPQ_DATA)
+def test_single_source_benchmark_total_big(graph, grammar, algo, chunk_size, benchmark):
+    g = LabelGraph.from_txt(graph)
+    gr = CnfGrammar.from_cnf(grammar)
+    chunks = g.chunkify(g.matrices_size if chunk_size is None else chunk_size)
+
+    if chunk_size is not None and chunk_size > g.matrices_size:
+        return
+
+    def run_suite():
+        a = algo(g, gr)
+        for chunk in tqdm(chunks, desc=f'{get_file_name(graph)}-{get_file_name(grammar)}-{algo.__name__}-{chunk_size}'):
+            a.solve(chunk)
+
+    benchmark.pedantic(run_suite, rounds=1, iterations=1, warmup_rounds=0)
 
 
 @pytest.mark.parametrize('chunk_size', [1, 2, 4, 8, 16, 32, 50, 100, 500, 1000, 5000, 10000, None])
