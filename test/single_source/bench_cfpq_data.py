@@ -48,7 +48,7 @@ def test_single_source_benchmark_total_big(graph, grammar, algo, chunk_size, ben
     benchmark.pedantic(run_suite, rounds=1, iterations=1, warmup_rounds=0)
 
 
-@pytest.mark.parametrize('chunk_size', [1, 2, 4, 8, 16, 32, 50, 100, 500, 1000, 5000, 10000, None])
+@pytest.mark.parametrize('chunk_size', [16, 32, 64, 100, 500, 1000, 5000, 10000, None])
 @all_cfpq_data_test_cases(GLOBAL_CFPQ_DATA)
 def test_single_source_benchmark_granularity(graph, grammar, algo, chunk_size, result_folder):
     g = LabelGraph.from_txt(graph)
@@ -70,7 +70,7 @@ def test_single_source_benchmark_granularity(graph, grammar, algo, chunk_size, r
 
     with open(result_file_path, mode='a', newline='\n') as csv_file:
         csv_writer = csv.writer(csv_file, delimiter=',', quoting=csv.QUOTE_NONNUMERIC, escapechar=' ')
-        headers = ['grammar', 'algo', 'chunk_size', 'times']
+        headers = ['grammar', 'algo', 'chunk_size', 'times', 'total']
 
         timer = SimpleTimer()
         times_of_chunks = []
@@ -81,4 +81,4 @@ def test_single_source_benchmark_granularity(graph, grammar, algo, chunk_size, r
             times_of_chunks.append(chunk_time)
         if append_headers:
             csv_writer.writerow(headers)
-        csv_writer.writerow([gr_name, a_name, chunk_size, times_of_chunks])
+        csv_writer.writerow([gr_name, a_name, chunk_size, times_of_chunks, sum(times_of_chunks)])

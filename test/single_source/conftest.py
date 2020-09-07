@@ -19,6 +19,6 @@ def result_folder():
     return result_folder
 
 
-@pytest.fixture(params=[SingleSourceAlgoBrute, SingleSourceAlgoSmart, SingleSourceAlgoOpt])
+@pytest.fixture(params=[SingleSourceAlgoBrute, SingleSourceAlgoOpt])
 def algo(request):
     return request.param
