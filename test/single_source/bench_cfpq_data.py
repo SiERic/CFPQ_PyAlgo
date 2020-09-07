@@ -55,6 +55,7 @@ def test_single_source_benchmark_granularity(graph, grammar, algo, chunk_size, r
     gr = CnfGrammar.from_cnf(grammar)
     a = algo(g, gr)
 
+    g_name = get_file_name(graph)
     gr_name = get_file_name(grammar)
     a_name = type(a).__name__
 
@@ -70,7 +71,7 @@ def test_single_source_benchmark_granularity(graph, grammar, algo, chunk_size, r
 
     with open(result_file_path, mode='a', newline='\n') as csv_file:
         csv_writer = csv.writer(csv_file, delimiter=',', quoting=csv.QUOTE_NONNUMERIC, escapechar=' ')
-        headers = ['grammar', 'algo', 'chunk_size', 'times', 'total']
+        headers = ['grammar', 'algo', 'chunk_size', 'chunk_id', 'chunk_time']
 
         timer = SimpleTimer()
         times_of_chunks = []
@@ -81,4 +82,5 @@ def test_single_source_benchmark_granularity(graph, grammar, algo, chunk_size, r
             times_of_chunks.append(chunk_time)
         if append_headers:
             csv_writer.writerow(headers)
-        csv_writer.writerow([gr_name, a_name, chunk_size, times_of_chunks, sum(times_of_chunks)])
+        for i, time in enumerate(times_of_chunks):
+            csv_writer.writerow([gr_name, a_name, chunk_size, i, time])
