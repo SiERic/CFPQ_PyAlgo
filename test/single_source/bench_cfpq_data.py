@@ -48,7 +48,7 @@ def test_single_source_benchmark_total_big(graph, grammar, algo, chunk_size, ben
     benchmark.pedantic(run_suite, rounds=1, iterations=1, warmup_rounds=0)
 
 
-@pytest.mark.parametrize('chunk_size', [16, 32, 64, 100, 500, 1000, 5000, 10000, None])
+@pytest.mark.parametrize('chunk_size', [32, 64, 100, 500, 1000, 5000, 10000, None])
 @all_cfpq_data_test_cases(GLOBAL_CFPQ_DATA)
 def test_single_source_benchmark_granularity(graph, grammar, algo, chunk_size, result_folder):
     g = LabelGraph.from_txt(graph)
@@ -63,7 +63,7 @@ def test_single_source_benchmark_granularity(graph, grammar, algo, chunk_size, r
         chunk_size = g.matrices_size
     chunks = g.chunkify(chunk_size)
 
-    result_file = f'{get_file_name(graph)}.csv'
+    result_file = f'{g_name}.csv'
     result_file_path = os.path.join(result_folder, result_file)
     append_headers = False
     if not os.path.exists(result_file_path):
